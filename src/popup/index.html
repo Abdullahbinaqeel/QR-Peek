@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>QR Peek</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body class="qrp">
+    <header class="head">
+      <span class="head-mark" id="head-icon"></span>
+      <h1 class="head-title">QR Peek</h1>
+      <button id="rescan" class="qrp-btn qrp-btn-quiet" type="button" title="Scan this tab again">
+        <span id="rescan-icon"></span>Rescan
+      </button>
+    </header>
+    <main id="results" class="results" aria-live="polite" aria-busy="true"></main>
+    <footer class="foot" id="hint"></footer>
+    <script src="popup.js"></script>
+  </body>
+</html>

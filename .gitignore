@@ -1,0 +1,10 @@
+node_modules/
+dist/
+tests/fixtures/*.png
+*.log
+.DS_Store
+
+# generated QR fixtures for the e2e run
+e2e/site/*.png
+e2e/site/index.html
+coverage/

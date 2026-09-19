@@ -1,0 +1,50 @@
+{
+  "name": "qr-peek",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Browser extension that reads the QR codes on the page you are looking at, shows what each one contains, and opens it only when you say so.",
+  "license": "MIT",
+  "author": "AbdullahBinAqeel",
+  "keywords": [
+    "qr",
+    "qr-code",
+    "browser-extension",
+    "chrome-extension",
+    "manifest-v3",
+    "scanner",
+    "zxing"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "dev": "node scripts/build.mjs --watch",
+    "icons": "node scripts/icons.mjs && node scripts/icons-module.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "node e2e/run.mjs",
+    "screenshots": "node scripts/screenshots.mjs",
+    "package": "node scripts/package.mjs",
+    "coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "zxing-wasm": "^3.1.4"
+  },
+  "devDependencies": {
+    "@phosphor-icons/core": "^2.1.1",
+    "@types/chrome": "^0.0.287",
+    "@types/node": "^22.9.0",
+    "@types/qrcode": "^1.5.5",
+    "@vitest/coverage-v8": "^2.1.9",
+    "esbuild": "^0.24.0",
+    "happy-dom": "^20.14.5",
+    "qrcode": "^1.5.4",
+    "sharp": "^0.33.5",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.6",
+    "ws": "^8.18.0"
+  }
+}

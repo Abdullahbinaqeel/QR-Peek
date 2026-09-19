@@ -1,6 +1,6 @@
 import api, { isRestrictedUrl, RESTRICTED_PAGE_MESSAGE } from '../lib/browser';
 import { canDecodeHere, captureVisibleTabDataUrl, frameFromDataUrl } from '../lib/capture';
-import { configureDecoder, cropFrame, scaleFrame, scanFrame, type Frame } from '../lib/decode';
+import { configureDecoder, cropFrame, scaleFrame, scanFrame, warmDecoder, type Frame } from '../lib/decode';
 import {
   CONTENT_SCRIPT_FILE,
   WASM_FILE,
@@ -21,6 +21,10 @@ const LAST_ERROR_KEY = 'qrpeek:lastError';
 
 // The decoder's WebAssembly binary ships with the extension; nothing is fetched from the network.
 configureDecoder({ locateFile: (path: string) => (path.endsWith('.wasm') ? api.runtime.getURL(WASM_FILE) : path) });
+
+// Instantiate the decoder while the worker is starting, so a scan that follows a wake-up does
+// not wait for it. Failures here are irrelevant: the scan path reports its own errors.
+void warmDecoder();
 
 api.runtime.onInstalled.addListener(() => {
   api.contextMenus.removeAll(() => {

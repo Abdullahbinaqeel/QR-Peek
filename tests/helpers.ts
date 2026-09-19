@@ -155,3 +155,17 @@ export async function compactQrPng(text: string, format: 'MicroQRCode' | 'rMQRCo
     .png()
     .toBuffer();
 }
+
+/**
+ * Puts a frame through the same encoding the extension's screenshot goes through, so a test can
+ * measure what the decoder actually receives rather than an idealised buffer.
+ */
+export async function throughCapture(frame: Frame, quality = 90): Promise<Frame> {
+  const png = await sharp(Buffer.from(frame.data), {
+    raw: { width: frame.width, height: frame.height, channels: 4 },
+  })
+    .png()
+    .toBuffer();
+
+  return toFrame(await sharp(await sharp(png).jpeg({ quality }).toBuffer()).png().toBuffer());
+}

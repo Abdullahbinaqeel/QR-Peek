@@ -28,6 +28,24 @@ export function configureDecoder(overrides: ZXingModuleOverrides): void {
   prepareZXingModule({ overrides, fireImmediately: false });
 }
 
+/**
+ * Starts loading and instantiating the WebAssembly module without waiting for a scan.
+ *
+ * A Manifest V3 worker is torn down when idle, so the first scan after it sleeps otherwise pays
+ * for instantiation on top of everything else. Called at worker startup, this overlaps with the
+ * screenshot instead of queueing behind it.
+ */
+export async function warmDecoder(): Promise<void> {
+  try {
+    await readBarcodes({ data: new Uint8ClampedArray(4), width: 1, height: 1 } as unknown as ImageData, {
+      formats: ['QRCode'],
+      maxNumberOfSymbols: 1,
+    });
+  } catch {
+    // Only the module mattered; a blank pixel has nothing to report.
+  }
+}
+
 export interface ScanOptions {
   /** Upper bound on codes reported from one frame. */
   maxResults?: number;

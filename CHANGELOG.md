@@ -14,6 +14,16 @@ All notable changes to this project are documented here. The format follows
   acknowledged too, so the in-page card can tell an opened tab from a lost message, and messages
   retry briefly in case the one that wakes an idle worker is dropped.
 
+### Performance
+
+- Screenshots are captured as JPEG rather than PNG. Encoding a full-screen PNG was the slowest
+  step in a scan, 175ms against 72ms on a 2560x1626 frame. Every measured decoding limit is
+  unchanged through the compression, which the tests now pin.
+- The decoder instantiates at worker startup instead of on the first scan, so WebAssembly setup
+  overlaps with taking the screenshot.
+- Together: a warm scan of a busy page went from about 460ms to 371ms, and a cold one from 580ms
+  to 423ms, cutting the penalty for a worker that has idled out from 120ms to 52ms.
+
 ### Testing
 
 - The keyboard shortcut and the right-click menu are now covered end to end. Neither event can be

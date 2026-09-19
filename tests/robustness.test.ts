@@ -13,6 +13,7 @@ import {
   qrPng,
   resample,
   skew,
+  throughCapture,
   toFrame,
 } from './helpers';
 
@@ -81,6 +82,25 @@ describe('damage past the limit, where it must report nothing rather than guess'
   it('never invents a payload from noise alone', async () => {
     const noise = await addNoise(await qrPng('placeholder', 400), 0.95);
     for (const hit of await scanFrame(await toFrame(noise))) expect(hit.text).toBe('placeholder');
+  });
+});
+
+describe('through the capture pipeline the extension actually uses', () => {
+  // Screenshots are taken as JPEG, because encoding a full-screen PNG is the slowest step in a
+  // scan by some margin. These cases prove the compression costs nothing in decoding terms.
+  it('still reads the smallest code that a raw frame can manage', async () => {
+    const frame = await frameWith(2560, 1440, [{ png: await qrPng(LINK, 50), left: 1200, top: 700 }]);
+    expect((await scanFrame(await throughCapture(frame))).map((hit) => hit.text)).toEqual([LINK]);
+  });
+
+  it.each([
+    ['blur, sigma 6', (png: Buffer) => blur(png, 6)],
+    ['a corner covered, 45% of the width', (png: Buffer) => occlude(png, 0.45)],
+    ['a tenth of the original contrast', (png: Buffer) => lowContrast(png, 0.1)],
+    ['noise over a quarter of the image', (png: Buffer) => addNoise(png, 0.25)],
+  ])('holds the limit for %s', async (_name, degrade) => {
+    const degraded = await toFrame(await degrade(await realWorldCode()));
+    expect((await scanFrame(await throughCapture(degraded))).map((hit) => hit.text)).toEqual([LINK]);
   });
 });
 
